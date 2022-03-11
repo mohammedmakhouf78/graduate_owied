@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\ProductController;
@@ -22,11 +23,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
 
-    Route::resource('category', CategoryController::class);
-    Route::resource('user', UserController::class);
-    Route::resource('product', ProductController::class);
-    Route::resource('review', ReviewController::class);
+
+Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+   
+    Route::group(['middleware' => 'auth'],function(){
+        Route::get('/', [HomeController::class, 'index'])->name('home');
+        Route::resource('category', CategoryController::class);
+        Route::resource('user', UserController::class);
+        Route::resource('product', ProductController::class);
+        Route::resource('review', ReviewController::class);
+        Route::get('/logout',[AuthController::class,'logout'])->name('logout');
+    });
+
+    Route::group(['middleware' => 'guest'],function(){
+        Route::get('/loginPage',[AuthController::class,'loginPage'])->name('loginPage');
+        Route::post('login',[AuthController::class,'login'])->name('login');
+    });
 });
