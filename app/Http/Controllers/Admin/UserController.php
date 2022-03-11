@@ -1,15 +1,16 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
+
 use App\Http\Controllers\Controller;
-use App\Models\Product;
-use App\Http\Requests\StoreProductRequest;
-use App\Http\Requests\UpdateProductRequest;
-use App\Models\Category;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use RealRashid\SweetAlert\Facades\Alert;
 
-class ProductController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,8 +19,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::get();
-        return view('admin.pages.product.index',compact('products'));
+        $users = User::get();
+        return view('admin.pages.user.index',compact('users'));
     }
 
     /**
@@ -29,9 +30,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        $categories = Category::get();
-        $users = User::get();
-        return view('admin.pages.product.create',compact('categories','users'));
+        return view('admin.pages.user.create');
     }
 
     /**
@@ -40,11 +39,13 @@ class ProductController extends Controller
      * @param  \App\Http\Requests\StoreCategoryRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreUserRequest $request)
     {
-        Product::create($request->validated());
-        Alert::success('Success', 'Product was Created');
-        return redirect(route('admin.product.index'));
+        $data = $request->validated();
+        $data['password'] = Hash::make($data['password']);
+        User::create($data);
+        Alert::success('Success', 'User was Created');
+        return redirect(route('admin.user.index'));
     }
 
     /**
@@ -53,7 +54,7 @@ class ProductController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Product $product)
+    public function show(User $user)
     {
         //
     }
@@ -64,11 +65,9 @@ class ProductController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Product $product)
+    public function edit(User $user)
     {
-        $categories = Category::get();
-        $users = User::get();
-        return view('admin.pages.product.edit',compact('product','categories','users'));
+        return view('admin.pages.user.edit',compact('user'));
     }
 
     /**
@@ -78,11 +77,11 @@ class ProductController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        $product->update($request->validated());
-        Alert::success('Success', 'Product was Updated');
-        return redirect(route('admin.product.index'));
+        $user->update($request->validated());
+        Alert::success('Success', 'User was Updated');
+        return redirect(route('admin.user.index'));
     }
 
     /**
@@ -91,10 +90,10 @@ class ProductController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(User $user)
     {
-        $product->delete();
-        Alert::success('Success', 'Product was Deleted');
-        return redirect(route('admin.product.index'));
+        $user->delete();
+        Alert::success('Success', 'User was Deleted');
+        return redirect(route('admin.user.index'));
     }
 }

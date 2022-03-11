@@ -34,8 +34,23 @@
 <!-- ChartJS -->
 <script src="{{asset('adminLTE/plugins/chart.js/Chart.min.js')}}"></script>
 
+<!-- Select2 -->
+<script src="{{asset('adminLTE/plugins/select2/js/select2.full.min.js')}}"></script>
+
+
+<script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 
 @include('sweetalert::alert')
+
+
+<script>
+    $(document).ready(function () {
+        $('.ckeditor').ckeditor();
+    });
+</script>
+
+@yield('js')
+
 </body>
 
 </html>
